@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const { connectToDatabase } = require('./config/database');
 const TeamRequest = require('./models/TeamRequest');
+require('dotenv').config();
 
 // Initialize Express app
 const app = express();
@@ -102,10 +103,34 @@ app.put('/api/requests/:id', async (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date(),
+    environment: process.env.NODE_ENV,
+    version: '1.0.0'
+  });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-}); 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'TeamUp API is running',
+    docs: '/api-docs',
+    health: '/health'
+  });
+});
+
+// Handle 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// For Vercel
+module.exports = app; 
