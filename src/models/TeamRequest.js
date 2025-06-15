@@ -16,7 +16,7 @@ const teamRequestSchema = new mongoose.Schema({
   }],
   projectType: {
     type: String,
-    required: true
+    trim: true
   },
   contactInfo: {
     type: String,
