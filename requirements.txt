@@ -1,7 +1,2 @@
 fastapi
 uvicorn
-pydantic
-beanie
-motor
-python-dotenv
-python-multipart
