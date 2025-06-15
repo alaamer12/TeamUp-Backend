@@ -1,27 +1,36 @@
 const mongoose = require('mongoose');
 
+const memberSchema = new mongoose.Schema({
+  tech_field: [String],
+  gender: String,
+  major: String,
+  planguage: [String],
+  already_know: Boolean
+}, { _id: false });
+
 const teamRequestSchema = new mongoose.Schema({
-  title: {
+  id: {
     type: String,
-    required: true,
     trim: true
   },
-  description: {
+  user_personal_phone: {
     type: String,
+    trim: true
+  },
+  user_name: {
+    type: String,
+    trim: true,
     required: true
   },
-  skills: [{
-    type: String,
-    trim: true
-  }],
-  projectType: {
+  user_gender: {
     type: String,
     trim: true
   },
-  contactInfo: {
+  user_abstract: {
     type: String,
-    required: true
+    trim: true
   },
+  members: [memberSchema],
   ownerFingerprint: {
     type: String,
     required: true

@@ -6,6 +6,7 @@ node_modules/
 .env.local
 .env.development
 .env.test
+.env.production
 
 # Logs
 logs
@@ -56,3 +57,4 @@ jspm_packages/
 
 # Vercel
 .vercel 
+.vercel
