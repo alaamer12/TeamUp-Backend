@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { connectToDatabase } = require('./config/database');
+const { getDatabaseConnection } = require('./config/database');
 const TeamRequest = require('./models/TeamRequest');
 require('dotenv').config();
 
@@ -9,8 +9,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Connect to MongoDB
-connectToDatabase();
+// Connect to MongoDB - For serverless, we'll connect at request time
+// We'll initialize connection once for local development
+if (process.env.NODE_ENV !== 'production') {
+  getDatabaseConnection().catch(console.error);
+}
 
 // Middleware
 app.use(cors({
@@ -20,6 +23,24 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
+
+// Connection middleware for serverless environments
+const ensureDbConnected = async (req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      await getDatabaseConnection();
+      next();
+    } catch (error) {
+      console.error('Database connection failed:', error);
+      res.status(500).json({ error: 'Database connection failed' });
+    }
+  } else {
+    next();
+  }
+};
+
+// Apply DB connection middleware to routes that need DB access
+app.use('/api', ensureDbConnected);
 
 // API Routes
 app.get('/api/requests', async (req, res) => {
@@ -107,7 +128,7 @@ app.get('/health', (req, res) => {
     status: 'ok', 
     timestamp: new Date(),
     environment: process.env.NODE_ENV,
-    version: '1.0.1'
+    version: '1.0.2'
   });
 });
 
