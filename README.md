@@ -1,63 +1,80 @@
-# TeamUp Backend
+# TeamUp Backend API
 
-A robust Express.js backend for the TeamUp platform, providing API endpoints for team request management and data persistence.
-
-> **Note**: This is part of the TeamUp monorepo. For the complete project overview and setup instructions, please refer to the [root README](../README.md).
+A FastAPI-based backend service for the TeamUp application that manages team formation requests.
 
 ## Features
 
-- **RESTful API**: Endpoints for managing team requests
-- **MongoDB Integration**: Database storage for team request data
-- **Ownership Verification**: Secure request management with fingerprint-based authentication
-- **CORS Support**: Configured for cross-origin requests
-- **Request Logging**: Detailed logging with Morgan
+- RESTful API for team formation requests
+- MongoDB integration with Beanie ODM
+- Async request handling
+- Health check and status endpoints
+- CORS configuration
+- Environment-based configuration
+- Production-ready with Uvicorn
 
-## Technology Stack
+## Project Structure
 
-- Express.js
-- Node.js
-- MongoDB with Mongoose
-- Morgan for request logging
-- CORS for cross-origin support
-- Dotenv for environment variable management
+```
+python/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application entry point
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── database.py      # Database connection handling
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── team_request.py  # Data models with Beanie
+│   └── api/
+│       ├── __init__.py
+│       └── endpoints/
+│           ├── __init__.py
+│           └── requests.py   # API endpoints
+├── .env                     # Environment variables
+└── requirements.txt         # Python dependencies
+```
 
-## Setup
+## Installation
+
+1. Clone the repository
+2. Create a virtual environment
+3. Install the dependencies:
 
 ```bash
-# Install dependencies
-npm install
-
-# Start server in development mode
-npm run dev
-
-# Start server in production mode
-npm start
+pip install -r requirements.txt
 ```
+
+4. Create a `.env` file based on the provided example
+
+## Running Locally
+
+Start the development server:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+The API will be available at `http://localhost:8080`
+
+## API Documentation
+
+API documentation is automatically generated and available at:
+
+- Swagger UI: `http://localhost:8080/docs`
+- ReDoc: `http://localhost:8080/redoc`
 
 ## API Endpoints
 
-| Method | Endpoint | Description | Authentication |
-|--------|----------|-------------|----------------|
-| GET | `/api/requests` | Get all team requests | None |
-| POST | `/api/requests` | Create a new team request | None |
-| PUT | `/api/requests/:id` | Update an existing team request | Ownership verification |
-| DELETE | `/api/requests/:id` | Delete a team request | Ownership verification |
-| GET | `/health` | Health check endpoint | None |
-
-## Authentication
-
-The API uses a simple ownership verification system. When creating a team request, a fingerprint is stored with the request. For update and delete operations, this fingerprint must be provided to verify ownership.
-
-## Data Storage
-
-Data is stored in MongoDB. The connection string can be configured using the `MONGODB_URI` environment variable.
+- `GET /api/requests`: Get all team requests
+- `POST /api/requests`: Create a new team request
+- `PUT /api/requests/{request_id}`: Update a team request
+- `DELETE /api/requests/{request_id}`: Delete a team request
+- `GET /health`: Health check
+- `GET /`: API information
 
 ## Environment Variables
 
-- `PORT`: The port the server listens on (default: 8080)
-- `MONGODB_URI`: MongoDB connection string (default: `mongodb://localhost:27017/teamup`)
-- `CORS_ORIGIN`: Allowed origin for CORS (default: `*`)
-
-## Deployment
-
-This backend is configured for deployment on Vercel. The configuration can be found in `vercel.json`. For detailed deployment instructions, see the [Deployment Guide](../DEPLOYMENT.md). 
+- `PORT`: Server port (default: 8080)
+- `NODE_ENV`: Environment (development, production)
+- `MONGODB_URI`: MongoDB connection string
+- `CORS_ORIGIN`: Allowed CORS origin 
